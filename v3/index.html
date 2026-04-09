@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>REMAINDER APP</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; min-height: 100vh; }
+ 
+    header {
+      background: #1a252f; color: white;
+      padding: 14px 24px; display: flex;
+      justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    header h1 { font-size: 20px; font-weight: 600; letter-spacing: 0.5px; }
+    nav { display: flex; gap: 8px; }
+    nav button {
+      background: transparent; border: 1px solid rgba(255,255,255,0.35);
+      color: white; padding: 7px 16px; border-radius: 6px;
+      cursor: pointer; font-size: 13px; transition: all 0.2s;
+    }
+    nav button:hover, nav button.active {
+      background: rgba(255,255,255,0.18); border-color: white;
+    }
+ 
+    .container { max-width: 860px; margin: 32px auto; padding: 0 16px; }
+ 
+    .section { display: none; }
+    .section.active { display: block; }
+ 
+    .section-title {
+      font-size: 17px; font-weight: 600; color: #1a252f;
+      margin-bottom: 18px; padding-left: 12px;
+      border-left: 4px solid #1a252f;
+    }
+ 
+    .form-card {
+      background: white; border-radius: 10px;
+      padding: 20px; margin-bottom: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .form-card h3 { font-size: 13px; color: #888; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+ 
+    .form-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .form-col { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+ 
+    input[type="text"], input[type="datetime-local"], textarea, select {
+      padding: 9px 12px; border: 1px solid #ddd; border-radius: 6px;
+      font-size: 14px; outline: none; transition: border-color 0.2s;
+      font-family: inherit; background: #fafafa;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #1a252f; background: white;
+    }
+    textarea { resize: vertical; min-height: 75px; }
+ 
+    .btn {
+      padding: 9px 18px; border: none; border-radius: 6px;
+      cursor: pointer; font-size: 13px; font-weight: 500;
+      transition: opacity 0.2s; white-space: nowrap;
+    }
+    .btn:hover { opacity: 0.82; }
+    .btn-primary { background: #1a252f; color: white; }
+    .btn-danger  { background: #e74c3c; color: white; }
+    .btn-info    { background: #2980b9; color: white; }
+    .btn-sm { padding: 5px 11px; font-size: 12px; }
+ 
+    .list { display: flex; flex-direction: column; gap: 12px; }
+ 
+    .card {
+      background: white; border-radius: 10px;
+      padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      display: flex; justify-content: space-between; align-items: flex-start;
+      border-left: 4px solid transparent;
+    }
+    .card.note-card     { border-left-color: #27ae60; }
+    .card.reminder-card { border-left-color: #2980b9; }
+    .card.fired         { border-left-color: #e67e22; opacity: 0.75; }
+ 
+    .card-body { flex: 1; }
+    .card-body h4 { font-size: 15px; font-weight: 600; color: #1a252f; margin-bottom: 4px; }
+    .card-body p  { font-size: 13px; color: #666; line-height: 1.5; }
+    .card-meta    { font-size: 11px; color: #bbb; margin-top: 6px; }
+ 
+    .badge {
+      display: inline-block; font-size: 11px; padding: 2px 9px;
+      border-radius: 20px; font-weight: 500; margin-top: 6px; margin-right: 4px;
+    }
+    .badge-subject  { background: #eafaf1; color: #1e8449; }
+    .badge-reminder { background: #ebf5fb; color: #1a5276; }
+    .badge-fired    { background: #fef9e7; color: #b7770d; }
+ 
+    .card-actions { display: flex; gap: 6px; flex-shrink: 0; margin-left: 14px; flex-wrap: wrap; justify-content: flex-end; }
+ 
+    .alert-toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #1a252f; color: white; padding: 13px 22px;
+      border-radius: 8px; font-size: 14px; display: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25); z-index: 999;
+      max-width: 320px;
+    }
+    .alert-toast.show { display: block; }
+ 
+    .empty { text-align: center; color: #ccc; font-size: 14px; padding: 48px; }
+  </style>
+</head>
+<body>
+ 
+<header>
+  <h1>📚 LMS Notes App</h1>
+  <nav>
+    <button class="active" onclick="showSection('notes', this)">Notes</button>
+    <button onclick="showSection('reminders', this)">Reminders</button>
+  </nav>
+</header>
+ 
+<div class="container">
+ 
+  <!-- ── NOTES ── -->
+  <div id="notes" class="section active">
+    <p class="section-title">My Notes</p>
+    <div class="form-card">
+      <h3>Add Note</h3>
+      <div class="form-col">
+        <input type="text" id="note-title" placeholder="Note title" />
+        <textarea id="note-body" placeholder="Write your note here..."></textarea>
+        <div class="form-row" style="justify-content: space-between;">
+          <select id="note-subject" style="max-width:200px;">
+            <option value="General">General</option>
+            <option value="Math">Math</option>
+            <option value="Science">Science</option>
+            <option value="History">History</option>
+            <option value="English">English</option>
+            <option value="Computer Science">Computer Science</option>
+          </select>
+          <button class="btn btn-primary" onclick="addNote()">Add Note</button>
+        </div>
+      </div>
+    </div>
+    <div class="list" id="notes-list"></div>
+  </div>
+ 
+  <!-- ── REMINDERS ── -->
+  <div id="reminders" class="section">
+    <p class="section-title">Reminders</p>
+    <div class="form-card">
+      <h3>Set Reminder</h3>
+      <div class="form-row">
+        <input type="text" id="rem-title" placeholder="Reminder title" style="flex:2;" />
+        <input type="datetime-local" id="rem-time" style="flex:1;" />
+        <button class="btn btn-primary" onclick="addReminder()">Set Reminder</button>
+      </div>
+    </div>
+    <div class="list" id="reminders-list"></div>
+  </div>
+ 
+</div>
+ 
+<div class="alert-toast" id="toast"></div>
+ 
+<script src="script.js"></script>
+</body>
+</html>

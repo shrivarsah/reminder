@@ -1,0 +1,16 @@
+{
+  "name": "lms-notes-app-v3",
+  "version": "3.0.0",
+  "description": "LMS Notes App - v3 with Reminders (Add, Notify, Delete)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

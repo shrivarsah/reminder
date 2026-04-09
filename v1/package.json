@@ -1,0 +1,12 @@
+{
+  "name": "reminder-app-v1",
+  "version": "1.0.0",
+  "description": "Reminder App - Version 1",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
